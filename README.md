@@ -21,3 +21,6 @@ python bot.py --token YOURTOKEN
 - [ ] create a game server & transfer from backup server to game server & start the game
 - [ ] stop the game & transfer file from game server to backup server & delete game server
 - [ ] status (On, Turning on, Off, Turning off)
+
+## Contribute
+Check issues to see ongoing tasks. Feel free to participate in tasks or Open a new issue.
