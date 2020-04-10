@@ -1,6 +1,8 @@
 import argparse
 import logging
 from telegram.ext import Updater, CommandHandler
+from emoji import emojize
+import minecraft as mc
 
 
 HELP_TEXT = '''
@@ -18,6 +20,30 @@ def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
+def up(update, context):
+    """
+    The /up command
+    Starts the server if it is down.
+    """
+    msg = context.bot.send_message(chat_id=update.effective_chat.id, text='Checking server status...')
+    # check server status
+    status = mc.get_status()
+    if status == mc.STATUS.UP:
+        context.bot.edit_message_text(emojize('The server is already :up:! ', use_aliases=True),
+                                      chat_id=update.effective_chat.id, message_id=msg.message_id)
+    elif status == mc.STATUS.STARTING:
+        context.bot.edit_message_text('The server is already starting...',
+                                      chat_id=update.effective_chat.id, message_id=msg.message_id)
+    elif status == mc.STATUS.DOWN:
+        context.bot.edit_message_text('The server is down. Starting...',
+                                      chat_id=update.effective_chat.id, message_id=msg.message_id)
+        # TODO: Here we should trigger the start_server job
+        # and put responding to the user in a queue
+    elif status == mc.STATUS.STOPPING:
+        context.bot.edit_message_text('The server is going down. Try again later.',
+                                      chat_id=update.effective_chat.id, message_id=msg.message_id)
+
+
 if __name__ == '__main__':
     # configure CLI parser
     parser = argparse.ArgumentParser()
@@ -31,12 +57,9 @@ if __name__ == '__main__':
     updater = Updater(token=args.token, use_context=True)
     dispatcher = updater.dispatcher
 
-    # creater command handlers
-    start_handler = CommandHandler('start', start)
-    help_handler = CommandHandler('help', start)
-
     # register command handlers
-    dispatcher.add_handler(start_handler)
+    dispatcher.add_handler(CommandHandler('start', start))
+    dispatcher.add_handler(CommandHandler('up', up))
 
     # start the bot
     updater.start_polling()
