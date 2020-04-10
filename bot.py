@@ -23,7 +23,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--token', help='The Token of the bot, provided by @BotFather', type=str, required=True)
     args = parser.parse_args()
-    print(args)
 
     # configure log level
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
